@@ -1,0 +1,9 @@
+{
+	"name": "adf-csr961",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "606f8953-573c-4409-b65a-7737614fbd7d",
+		"tenantId": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6"
+	}
+}
