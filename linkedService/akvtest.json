@@ -1,0 +1,10 @@
+{
+	"name": "akvtest",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://SQLServerCTPKeys.vault.azure.net/"
+		}
+	}
+}
