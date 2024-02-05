@@ -1,0 +1,20 @@
+{
+	"name": "adftest",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-6141914541424251.11.azuredatabricks.net",
+			"accessToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "akvtest",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "TokenAdfCsr96Braveant",
+				"secretVersion": "ab146db71438497aaa3d0a044c3f1ddd"
+			},
+			"existingClusterId": "0202-195510-ujd6538b"
+		}
+	}
+}
