@@ -1,0 +1,65 @@
+{
+	"name": "AzSql_Raw_Ffia",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "NombreCompleto",
+				"type": "varchar"
+			},
+			{
+				"name": "Club",
+				"type": "varchar"
+			},
+			{
+				"name": "Liga",
+				"type": "varchar"
+			},
+			{
+				"name": "FechaNacimiento",
+				"type": "date"
+			},
+			{
+				"name": "AlturaCM",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PesoKG",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Nacionalidad",
+				"type": "varchar"
+			},
+			{
+				"name": "ValorEuropa",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PiePreferido",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FIFA"
+		}
+	}
+}
