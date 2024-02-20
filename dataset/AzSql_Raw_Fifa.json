@@ -1,9 +1,12 @@
 {
-	"name": "AzSql_Raw_Ffia",
+	"name": "AzSql_Raw_Fifa",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureSqlDatabase1",
 			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "FIFA"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
