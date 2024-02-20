@@ -1,0 +1,43 @@
+{
+	"name": "AzStorage_Csv_Employ",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "EMPLOY"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "empledos.csv",
+				"container": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EMPLEADO",
+				"type": "String"
+			},
+			{
+				"name": "\tSUELDO",
+				"type": "String"
+			},
+			{
+				"name": "\t\tDEPARTAMENTO",
+				"type": "String"
+			},
+			{
+				"name": "\tPROJECT_MANAGER",
+				"type": "String"
+			}
+		]
+	}
+}

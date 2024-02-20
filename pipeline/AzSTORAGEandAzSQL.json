@@ -1,0 +1,84 @@
+{
+	"name": "AzSTORAGEandAzSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "CsvEmploy_To_AzSql_RawE_EMPLEADOS_CSV",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzStorage_Csv_Employ",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzSql_Raw_E_EMPLEADOS_CSV",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Servidor": {
+				"type": "string",
+				"defaultValue": "caldata"
+			},
+			"adlscsr961": {
+				"type": "string",
+				"defaultValue": "storage_account"
+			}
+		},
+		"variables": {
+			"table_names": {
+				"type": "String",
+				"defaultValue": "raw_data"
+			},
+			"folder_path": {
+				"type": "String",
+				"defaultValue": "raw"
+			},
+			"csv_url_path": {
+				"type": "String",
+				"defaultValue": "https://adlscsr961.blob.core.windows.net/raw/empledos"
+			}
+		},
+		"annotations": []
+	}
+}

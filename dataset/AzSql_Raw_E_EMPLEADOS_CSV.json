@@ -1,0 +1,52 @@
+{
+	"name": "AzSql_Raw_E_EMPLEADOS_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "EMPLOY"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EMPLEADO",
+				"type": "varchar"
+			},
+			{
+				"name": "SUELDO",
+				"type": "varchar"
+			},
+			{
+				"name": "FIELD3",
+				"type": "date"
+			},
+			{
+				"name": "DEPARTAMENTO",
+				"type": "varchar"
+			},
+			{
+				"name": "PROJECT MANAGER",
+				"type": "varchar"
+			},
+			{
+				"name": "FIELD6",
+				"type": "varchar"
+			},
+			{
+				"name": "FIELD7",
+				"type": "varchar"
+			},
+			{
+				"name": "FIELD8",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "E_EMPLEADOS_CSV"
+		}
+	}
+}
