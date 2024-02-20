@@ -91,6 +91,279 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzSTORAGEandAzSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CsvEmploy_To_AzSql_RawE_EMPLEADOS_CSV",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzStorage_Csv_Employ",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzSql_Raw_E_EMPLEADOS_CSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Servidor": {
+						"type": "string",
+						"defaultValue": "caldata"
+					},
+					"adlscsr961": {
+						"type": "string",
+						"defaultValue": "storage_account"
+					}
+				},
+				"variables": {
+					"table_names": {
+						"type": "String",
+						"defaultValue": "raw_data"
+					},
+					"folder_path": {
+						"type": "String",
+						"defaultValue": "raw"
+					},
+					"csv_url_path": {
+						"type": "String",
+						"defaultValue": "https://adlscsr961.blob.core.windows.net/raw/empledos"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzStorage_Csv_Employ')]",
+				"[concat(variables('factoryId'), '/datasets/AzSql_Raw_E_EMPLEADOS_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzStorage_Csv_Employ')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "EMPLOY"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "empledos.csv",
+						"container": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "EMPLEADO",
+						"type": "String"
+					},
+					{
+						"name": "\tSUELDO",
+						"type": "String"
+					},
+					{
+						"name": "\t\tDEPARTAMENTO",
+						"type": "String"
+					},
+					{
+						"name": "\tPROJECT_MANAGER",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzSql_Raw_Fifa')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FIFA"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "NombreCompleto",
+						"type": "varchar"
+					},
+					{
+						"name": "Club",
+						"type": "varchar"
+					},
+					{
+						"name": "Liga",
+						"type": "varchar"
+					},
+					{
+						"name": "FechaNacimiento",
+						"type": "date"
+					},
+					{
+						"name": "AlturaCM",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PesoKG",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Nacionalidad",
+						"type": "varchar"
+					},
+					{
+						"name": "ValorEuropa",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "PiePreferido",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FIFA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzSql_Raw_E_EMPLEADOS_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "EMPLOY"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EMPLEADO",
+						"type": "varchar"
+					},
+					{
+						"name": "SUELDO",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD3",
+						"type": "date"
+					},
+					{
+						"name": "DEPARTAMENTO",
+						"type": "varchar"
+					},
+					{
+						"name": "PROJECT MANAGER",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD6",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD7",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD8",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "E_EMPLEADOS_CSV"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
 		}
 	]
 }
