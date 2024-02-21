@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "EMPLOY"
+			"name": "CSV PROCESSS-EMPLOY"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "FIFA"
+			"name": "AzSQL TO CSV FIFA"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
