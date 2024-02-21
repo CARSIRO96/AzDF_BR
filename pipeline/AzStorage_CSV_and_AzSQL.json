@@ -1,5 +1,5 @@
 {
-	"name": "AzSTORAGEandAzSQL",
+	"name": "AzStorage_CSV_and_AzSQL",
 	"properties": {
 		"activities": [
 			{
@@ -34,6 +34,56 @@
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "EMPLEADO",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EMPLEADO",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "\tSUELDO",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SUELDO",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "\t\tDEPARTAMENTO",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DEPARTAMENTO",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "\tPROJECT_MANAGER",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PROJECT_MANAGER",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
