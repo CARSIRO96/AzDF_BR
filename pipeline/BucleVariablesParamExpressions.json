@@ -29,7 +29,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat(    'SELECT * \nINTO'   ,    item()   , '_COPY \nFROM ' , item() )\n",
+										"value": "@concat(    'SELECT * \nFROM ' , item() )\n",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
