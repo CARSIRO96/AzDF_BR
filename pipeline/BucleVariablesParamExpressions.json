@@ -8,6 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.ARR_TABLE_NAMES",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Lookup1",
@@ -25,10 +29,11 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@SELECT * \r\nINTO concat(    item(), \"_COPY\" )\r\nFROM item()",
+										"value": "@concat(    'SELECT * \nINTO'   ,    item()   , '_COPY \nFROM ' , item() )\n",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
+									"isolationLevel": "ReadCommitted",
 									"partitionOption": "None"
 								},
 								"dataset": {
@@ -44,17 +49,11 @@
 		"parameters": {
 			"ARR_FILE_NAMES": {
 				"type": "array",
-				"defaultValue": [
-					"Actual 2023_Q1.xlsx",
-					"Actual 2023_Q2.xlsx"
-				]
+				"defaultValue": "[Actual 2023_Q1.xlsx, Actual 2023_Q2.xlsx]"
 			},
 			"ARR_TABLE_NAMES": {
 				"type": "array",
-				"defaultValue": [
-					"FIFA",
-					"E_EMPLEADOS_CSV"
-				]
+				"defaultValue": "[FIFA, E_EMPLEADOS_CSV]"
 			}
 		},
 		"annotations": []
