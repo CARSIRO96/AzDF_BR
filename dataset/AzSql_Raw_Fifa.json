@@ -61,8 +61,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "dbo",
-			"table": "FIFA"
+			"schema": "",
+			"table": ""
 		}
 	}
 }
