@@ -1,0 +1,62 @@
+{
+	"name": "BucleVariablesParamExpressions",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"activities": [
+						{
+							"name": "Lookup1",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@SELECT * \r\nINTO concat(    item(), \"_COPY\" )\r\nFROM item()",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "AzSql_Raw_E_EMPLEADOS_CSV",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"ARR_FILE_NAMES": {
+				"type": "array",
+				"defaultValue": [
+					"Actual 2023_Q1.xlsx",
+					"Actual 2023_Q2.xlsx"
+				]
+			},
+			"ARR_TABLE_NAMES": {
+				"type": "array",
+				"defaultValue": [
+					"FIFA",
+					"E_EMPLEADOS_CSV"
+				]
+			}
+		},
+		"annotations": []
+	}
+}
