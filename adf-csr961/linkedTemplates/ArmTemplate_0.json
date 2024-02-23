@@ -68,63 +68,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzSql_Raw_E_EMPLEADOS_CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "CSV PROCESSS-EMPLOY"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "EMPLEADO",
-						"type": "varchar"
-					},
-					{
-						"name": "SUELDO",
-						"type": "varchar"
-					},
-					{
-						"name": "FIELD3",
-						"type": "date"
-					},
-					{
-						"name": "DEPARTAMENTO",
-						"type": "varchar"
-					},
-					{
-						"name": "PROJECT MANAGER",
-						"type": "varchar"
-					},
-					{
-						"name": "FIELD6",
-						"type": "varchar"
-					},
-					{
-						"name": "FIELD7",
-						"type": "varchar"
-					},
-					{
-						"name": "FIELD8",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "E_EMPLEADOS_CSV"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AzSql_RAW_DATA')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -203,6 +146,120 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzSql_Raw_E_EMPLEADOS_CSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "CSV PROCESSS-EMPLOY"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EMPLEADO",
+						"type": "varchar"
+					},
+					{
+						"name": "SUELDO",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD3",
+						"type": "date"
+					},
+					{
+						"name": "DEPARTAMENTO",
+						"type": "varchar"
+					},
+					{
+						"name": "PROJECT MANAGER",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD6",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD7",
+						"type": "varchar"
+					},
+					{
+						"name": "FIELD8",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "E_EMPLEADOS_CSV"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzStorage_Csv_Dynamic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"csv_name": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "BUCLE FOR"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().csv_name",
+							"type": "Expression"
+						},
+						"folderPath": " VENTAS_PASADAS",
+						"container": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "EMPLEADO",
+						"type": "String"
+					},
+					{
+						"name": "\tSUELDO",
+						"type": "String"
+					},
+					{
+						"name": "\t\tDEPARTAMENTO",
+						"type": "String"
+					},
+					{
+						"name": "\tPROJECT_MANAGER",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		},
 		{
@@ -1765,31 +1822,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/adftest')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://adb-6141914541424251.11.azuredatabricks.net",
-					"accessToken": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "akvtest",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "TokenAdfCsr96Braveant",
-						"secretVersion": "ab146db71438497aaa3d0a044c3f1ddd"
-					},
-					"existingClusterId": "[parameters('adftest_properties_typeProperties_existingClusterId')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/akvtest')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/dynamicLastYearExcelNameSQLtoEXCEL')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1834,60 +1866,28 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzStorage_Csv_Dynamic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/adftest')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"csv_name": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "BUCLE FOR"
-				},
 				"annotations": [],
-				"type": "DelimitedText",
+				"type": "AzureDatabricks",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().csv_name",
-							"type": "Expression"
+					"domain": "https://adb-6141914541424251.11.azuredatabricks.net",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "akvtest",
+							"type": "LinkedServiceReference"
 						},
-						"folderPath": " VENTAS_PASADAS",
-						"container": "raw"
+						"secretName": "TokenAdfCsr96Braveant",
+						"secretVersion": "ab146db71438497aaa3d0a044c3f1ddd"
 					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "EMPLEADO",
-						"type": "String"
-					},
-					{
-						"name": "\tSUELDO",
-						"type": "String"
-					},
-					{
-						"name": "\t\tDEPARTAMENTO",
-						"type": "String"
-					},
-					{
-						"name": "\tPROJECT_MANAGER",
-						"type": "String"
-					}
-				]
+					"existingClusterId": "[parameters('adftest_properties_typeProperties_existingClusterId')]"
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+				"[concat(variables('factoryId'), '/linkedServices/akvtest')]"
 			]
 		},
 		{
@@ -2161,7 +2161,7 @@
 						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "TRUNCATE TABLE ",
+								"activity": "TRUNCATE TABLE",
 								"dependencyConditions": [
 									"Completed"
 								]
