@@ -121,7 +121,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "TRUNCATE TABLE ",
+						"activity": "TRUNCATE TABLE",
 						"dependencyConditions": [
 							"Completed"
 						]
