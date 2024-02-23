@@ -1,0 +1,52 @@
+{
+	"name": "AzStorage_Csv_Dynamic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"csv_name": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "BUCLE FOR"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().csv_name",
+					"type": "Expression"
+				},
+				"folderPath": " VENTAS_PASADAS",
+				"container": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EMPLEADO",
+				"type": "String"
+			},
+			{
+				"name": "\tSUELDO",
+				"type": "String"
+			},
+			{
+				"name": "\t\tDEPARTAMENTO",
+				"type": "String"
+			},
+			{
+				"name": "\tPROJECT_MANAGER",
+				"type": "String"
+			}
+		]
+	}
+}

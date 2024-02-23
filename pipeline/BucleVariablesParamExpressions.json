@@ -5,16 +5,23 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ForEach2",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@pipeline().parameters.ARR_TABLE_NAMES",
+						"value": "@activity('LookupExcelSheetTable').output.value",
 						"type": "Expression"
 					},
 					"activities": [
 						{
-							"name": "Lookup1",
+							"name": "LookupExcelTable",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -29,7 +36,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat(    'SELECT *  \nFROM ' , item() )",
+										"value": "@concat(    'SELECT *  \nFROM ' , item().TABLE_NAME )",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -41,6 +48,217 @@
 									"type": "DatasetReference"
 								}
 							}
+						},
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "AzSql_RAW_DATA",
+									"type": "DatasetReference",
+									"parameters": {
+										"table_name": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzStorage_Csv_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"csv_name": {
+											"value": "item().csv_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "LookupExcelSheetTable",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "TRUNCATE TABLE ",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT \r\n    'Actual 2023_Q1.xlsx' AS EXCEL_NAME\r\n    ,\r\n    'Actual 2023_Q1.csv' AS CSV_NAME\r\n    ,\r\n    'DS - Ventas Ticket (MKT)' AS SHEET_NAME\r\n    ,\r\n    'E_LAST_YEAR_Q1_XLSX'   AS TABLE_NAME\r\nUNION ALL\r\nSELECT \r\n    'Actual 2023_Q2.xlsx' AS EXCEL_NAME\r\n    ,\r\n    'Actual 2023_Q1.csv' AS CSV_NAME\r\n    ,\r\n    'DS - Ventas Ticket (MKT)' AS SHEET_NAME\r\n    ,\r\n    'E_LAST_YEAR_Q2_XLSX'   AS TABLE_NAME\r\n\r\n\r\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzSql_Raw_E_EMPLEADOS_CSV",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "TRUNCATE TABLE",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE E_LAST_YEAR_Q1_XLSX\nTRUNCATE TABLE E_LAST_YEAR_Q2_XLSX\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "ForEach2",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LookupExcelSheetTable",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookupExcelSheetTable').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "ExcelToSQL-E_LAST_YEAR",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "dynamicLastYearExcelNameSQLtoEXCEL",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@item().EXCEL_NAME",
+											"type": "Expression"
+										},
+										"sheet_name": {
+											"value": "@item().SHEET_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzSql_RAW_DATA",
+									"type": "DatasetReference",
+									"parameters": {
+										"table_name": {
+											"value": "@item().TABLE_NAME",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					]
 				}

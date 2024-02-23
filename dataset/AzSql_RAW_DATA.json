@@ -1,9 +1,14 @@
 {
-	"name": "AzSql_Raw_Fifa",
+	"name": "AzSql_RAW_DATA",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureSqlDatabase1",
 			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table_name": {
+				"type": "string"
+			}
 		},
 		"folder": {
 			"name": "AzSQL TO CSV FIFA"
@@ -61,8 +66,11 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "",
-			"table": ""
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().table_name",
+				"type": "Expression"
+			}
 		}
 	}
 }

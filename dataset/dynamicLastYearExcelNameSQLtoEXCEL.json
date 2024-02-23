@@ -1,0 +1,39 @@
+{
+	"name": "dynamicLastYearExcelNameSQLtoEXCEL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			},
+			"sheet_name": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "BUCLE FOR"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().sheet_name",
+				"type": "Expression"
+			},
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": "VENTAS_PASADAS",
+				"container": "raw"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}
