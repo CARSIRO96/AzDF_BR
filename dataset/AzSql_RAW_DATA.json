@@ -11,7 +11,7 @@
 			}
 		},
 		"folder": {
-			"name": "AzSQL TO CSV FIFA"
+			"name": "AzSQL_DATABASES"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",

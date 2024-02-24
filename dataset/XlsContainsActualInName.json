@@ -1,0 +1,72 @@
+{
+	"name": "XlsContainsActualInName",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FOLER_NAME": {
+				"type": "String"
+			},
+			"FILE_NAME": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AzStorage_CSV_and_AzSQL/MultipleFiles1FolderToAzSQL"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().FILE_NAME",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().FOLER_NAME",
+					"type": "Expression"
+				},
+				"container": "raw"
+			},
+			"sheetIndex": 0,
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "RestauranteCodigo",
+				"type": "String"
+			},
+			{
+				"name": "RestauranteCompañia",
+				"type": "String"
+			},
+			{
+				"name": "Analisis (Fechas)Dia de la semana (Nº)",
+				"type": "String"
+			},
+			{
+				"name": "RestaurantePais",
+				"type": "String"
+			},
+			{
+				"name": "Analisis (Fechas)Fecha",
+				"type": "String"
+			},
+			{
+				"name": "Canal ventaCanal venta (Natural detalle/HD)",
+				"type": "String"
+			},
+			{
+				"name": "Venta__Neta___Real_",
+				"type": "String"
+			},
+			{
+				"name": "SumNº_Tickets",
+				"type": "String"
+			}
+		]
+	}
+}
