@@ -1,0 +1,12 @@
+{
+	"name": "HTTP_CSV",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
