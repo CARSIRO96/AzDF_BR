@@ -1,0 +1,12 @@
+{
+	"name": "GIT_CSV_LINK",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
