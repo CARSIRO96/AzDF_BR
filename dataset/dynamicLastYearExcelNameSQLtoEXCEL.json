@@ -6,10 +6,10 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"filename": {
+			"sheet_name": {
 				"type": "string"
 			},
-			"sheet_name": {
+			"filename": {
 				"type": "string"
 			}
 		},

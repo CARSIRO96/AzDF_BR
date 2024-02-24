@@ -210,7 +210,7 @@
 									"type": "ExcelSource",
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
-										"recursive": false,
+										"recursive": true,
 										"enablePartitionDiscovery": false
 									}
 								},
@@ -238,6 +238,10 @@
 									"parameters": {
 										"sheet_name": {
 											"value": "@item().SHEET_NAME",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().filename   ",
 											"type": "Expression"
 										}
 									}
