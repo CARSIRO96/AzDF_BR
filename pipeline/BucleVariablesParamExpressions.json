@@ -169,7 +169,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "\nDECLARE @tableName NVARCHAR(MAX)\nDECLARE @sql NVARCHAR(MAX)\nDECLARE cur CURSOR FOR\n\t\t SELECT 'E_BUDGET_VENTAS_SALA_XLSX' AS TABLE_NAMES\n\t\tUNION ALL \n\t\tSELECT 'E_BUDGET_VENTAS_SALA_dsdsdadfawdewaeeXLSX'\n\nOPEN cur\nFETCH NEXT FROM cur INTO @tableName\nWHILE @@FETCH_STATUS = 0\nBEGIN\n    SET @sql = 'IF EXISTS (SELECT * FROM sys.tables WHERE name = '''\n\t\t+ @tableName\n\t\t\t+ '''AND type = ''U'')\n\tBEGIN\n\t\tDROP TABLE IF EXISTS\n\t' + QUOTENAME(@tableName)\n\t+ ' END\nELSE\n\tBEGIN\n\t\tPRINT ''The table does not exist.'';\n\tEND\n'\n\t--SELECT @sql\n    EXEC sp_executesql @sql\n    FETCH NEXT FROM cur INTO @tableName\nEND\n\nCLOSE cur\nDEALLOCATE cur\n\n"
+							"text": "\nDECLARE @tableName NVARCHAR(MAX)\nDECLARE @sql NVARCHAR(MAX)\nDECLARE cur CURSOR FOR\n------------------------------- CUIDADO !! SE BORRARÁN\n\t\t SELECT 'E_BUDGET_VENTAS_SALA_XLSX' AS TABLE_NAMES\n\t\tUNION ALL \n\t\tSELECT 'E_BUDGET_VENTAS_SALA_dsdsdadfawdewaeeXLSX'\n------------------------------- CUIDADO !!\nOPEN cur\nFETCH NEXT FROM cur INTO @tableName\nWHILE @@FETCH_STATUS = 0\nBEGIN\n    SET @sql = 'IF EXISTS (SELECT * FROM sys.tables WHERE name = '''\n\t\t+ @tableName\n\t\t\t+ '''AND type = ''U'')\n\tBEGIN\n\t\tDROP TABLE IF EXISTS\n\t' + QUOTENAME(@tableName)\n\t+ ' END\nELSE\n\tBEGIN\n\t\tPRINT ''The table does not exist.'';\n\tEND\n'\n\t--SELECT @sql\n    EXEC sp_executesql @sql\n    FETCH NEXT FROM cur INTO @tableName\nEND\n\nCLOSE cur\nDEALLOCATE cur\n\n"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -236,10 +236,6 @@
 									"referenceName": "dynamicLastYearExcelNameSQLtoEXCEL",
 									"type": "DatasetReference",
 									"parameters": {
-										"filename": {
-											"value": "@item().EXCEL_NAME",
-											"type": "Expression"
-										},
 										"sheet_name": {
 											"value": "@item().SHEET_NAME",
 											"type": "Expression"
