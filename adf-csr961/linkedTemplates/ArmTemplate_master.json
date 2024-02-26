@@ -15,6 +15,26 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
+		"DOPB OAUTH_clientSecret": {
+			"type": "secureString",
+			"metadata": "Secure string for 'clientSecret' of 'DOPB OAUTH'"
+		},
+		"DOPB OAUTH_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.dropbox.com"
+		},
+		"DOPB OAUTH_properties_typeProperties_clientId": {
+			"type": "string",
+			"defaultValue": "kpamkpg3iqd0u8z"
+		},
+		"GIT_CSV_LINK_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.dropboxapi.com/"
+		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"type": "string",
 			"defaultValue": "0202-195510-ujd6538b"
@@ -55,6 +75,21 @@
 					},
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
+					"DOPB OAUTH_clientSecret": {
+						"value": "[parameters('DOPB OAUTH_clientSecret')]"
+					},
+					"DOPB OAUTH_properties_typeProperties_url": {
+						"value": "[parameters('DOPB OAUTH_properties_typeProperties_url')]"
+					},
+					"DOPB OAUTH_properties_typeProperties_clientId": {
+						"value": "[parameters('DOPB OAUTH_properties_typeProperties_clientId')]"
+					},
+					"GIT_CSV_LINK_properties_typeProperties_url": {
+						"value": "[parameters('GIT_CSV_LINK_properties_typeProperties_url')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
 					},
 					"akvtest_properties_typeProperties_baseUrl": {
 						"value": "[parameters('akvtest_properties_typeProperties_baseUrl')]"

@@ -11,6 +11,21 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
+		"DOPB OAUTH_clientSecret": {
+			"value": ""
+		},
+		"DOPB OAUTH_properties_typeProperties_url": {
+			"value": "https://www.dropbox.com"
+		},
+		"DOPB OAUTH_properties_typeProperties_clientId": {
+			"value": "kpamkpg3iqd0u8z"
+		},
+		"GIT_CSV_LINK_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://api.dropboxapi.com/"
+		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"value": "0202-195510-ujd6538b"
 		},

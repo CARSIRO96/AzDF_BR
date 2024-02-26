@@ -15,6 +15,26 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
+		"DOPB OAUTH_clientSecret": {
+			"type": "secureString",
+			"metadata": "Secure string for 'clientSecret' of 'DOPB OAUTH'"
+		},
+		"DOPB OAUTH_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.dropbox.com"
+		},
+		"DOPB OAUTH_properties_typeProperties_clientId": {
+			"type": "string",
+			"defaultValue": "kpamkpg3iqd0u8z"
+		},
+		"GIT_CSV_LINK_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.dropboxapi.com/"
+		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"type": "string",
 			"defaultValue": "0202-195510-ujd6538b"
@@ -29,6 +49,63 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/API DATA')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": "https://www.dropbox.com/oauth2/authorize?client_id=kpamkpg3iqd0u8z&response_type=code"
+						}
+					},
+					{
+						"name": "Web2",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": "https://api.dropboxapi.com/oauth2/token",
+							"body": "grant_type=client_credentials&client_id=kpamkpg3iqd0u8z&client_secret=0ojfgtz2y1qtnr5"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzStorage_CSV_and_AzSQL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -37,7 +114,16 @@
 					{
 						"name": "CsvEmploy_To_AzSql_RawE_EMPLEADOS_CSV",
 						"type": "Copy",
-						"dependsOn": [],
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "Excels To AzSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -137,6 +223,276 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Excels To AzSQL",
+						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "VENTAS_PASADAS",
+									"wildcardFileName": "Actual*.xlsx",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "XlsContainsActualInName",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Metadat FOLDERS Childitem",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "DROP E_ACTUAL_LAST_YEAR",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "XlsContainsActualInName",
+								"type": "DatasetReference",
+								"parameters": {
+									"FOLER_NAME": {
+										"value": "@variables('folder_name')",
+										"type": "Expression"
+									},
+									"FILE_NAME": {
+										"value": "@variables('Excel_name')",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"dataset": {
+								"referenceName": "XlsContainsActualInName",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "1 BUCLE POR CADA CARPETA",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadat FOLDERS Childitem",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadat FOLDERS Childitem').output.childItems",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@or(\n        contains(  item().name   , 'ACTUAL'   ) \n        ,contains(  item().name   , 'PASADA'   ) \n   ) \n\n",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Folder Name",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"policy": {
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "folder_name",
+													"value": {
+														"value": "@if(\n    or(\n        startswith(     item().name,    'VENTAS'), \n        contains(       item().name,    'VENTA'     )\n        )\n        ,   item().name\n        ,   null\n\n    )",
+														"type": "Expression"
+													}
+												}
+											},
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Folder Name",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "ExcelSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": {
+																"value": "@variables('folder_name')",
+																"type": "Expression"
+															},
+															"wildcardFileName": "Actual*.xlsx",
+															"enablePartitionDiscovery": false
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink",
+														"writeBehavior": "insert",
+														"sqlWriterUseTableLock": false,
+														"tableOption": "autoCreate",
+														"disableMetricsCollection": false
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "XlsContainsActualInName",
+														"type": "DatasetReference",
+														"parameters": {
+															"FOLER_NAME": {
+																"value": "@variables('folder_name')",
+																"type": "Expression"
+															},
+															"FILE_NAME": "Actual Q1.xlsx"
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "AzSql_RAW_DATA",
+														"type": "DatasetReference",
+														"parameters": {
+															"table_name": "E_LAST_YEAR_XLSX"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "DROP E_ACTUAL_LAST_YEAR",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "DROP TABLE IF EXISTS E_LAST_YEAR_XLSX"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
 					}
 				],
 				"policy": {
@@ -157,20 +513,21 @@
 						"type": "String",
 						"defaultValue": "raw_data"
 					},
-					"folder_path": {
-						"type": "String",
-						"defaultValue": "raw"
+					"folder_name": {
+						"type": "String"
 					},
-					"csv_url_path": {
-						"type": "String",
-						"defaultValue": "https://adlscsr961.blob.core.windows.net/raw/empledos"
+					"Excel_name": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzStorage_Csv_Employ')]",
-				"[concat(variables('factoryId'), '/datasets/AzSql_Raw_E_EMPLEADOS_CSV')]"
+				"[concat(variables('factoryId'), '/datasets/AzSql_Raw_E_EMPLEADOS_CSV')]",
+				"[concat(variables('factoryId'), '/datasets/XlsContainsActualInName')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]",
+				"[concat(variables('factoryId'), '/datasets/AzSql_RAW_DATA')]"
 			]
 		},
 		{
@@ -348,7 +705,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "\nDECLARE @tableName NVARCHAR(MAX)\nDECLARE @sql NVARCHAR(MAX)\nDECLARE cur CURSOR FOR\n\t\t SELECT 'E_BUDGET_VENTAS_SALA_XLSX' AS TABLE_NAMES\n\t\tUNION ALL \n\t\tSELECT 'E_BUDGET_VENTAS_SALA_dsdsdadfawdewaeeXLSX'\n\nOPEN cur\nFETCH NEXT FROM cur INTO @tableName\nWHILE @@FETCH_STATUS = 0\nBEGIN\n    SET @sql = 'IF EXISTS (SELECT * FROM sys.tables WHERE name = '''\n\t\t+ @tableName\n\t\t\t+ '''AND type = ''U'')\n\tBEGIN\n\t\tDROP TABLE IF EXISTS\n\t' + QUOTENAME(@tableName)\n\t+ ' END\nELSE\n\tBEGIN\n\t\tPRINT ''The table does not exist.'';\n\tEND\n'\n\t--SELECT @sql\n    EXEC sp_executesql @sql\n    FETCH NEXT FROM cur INTO @tableName\nEND\n\nCLOSE cur\nDEALLOCATE cur\n\n"
+									"text": "\nDECLARE @tableName NVARCHAR(MAX)\nDECLARE @sql NVARCHAR(MAX)\nDECLARE cur CURSOR FOR\n------------------------------- CUIDADO !! SE BORRARÁN\n\t\t SELECT 'E_BUDGET_VENTAS_SALA_XLSX' AS TABLE_NAMES\n\t\tUNION ALL \n\t\tSELECT 'E_BUDGET_VENTAS_SALA_dsdsdadfawdewaeeXLSX'\n------------------------------- CUIDADO !!\nOPEN cur\nFETCH NEXT FROM cur INTO @tableName\nWHILE @@FETCH_STATUS = 0\nBEGIN\n    SET @sql = 'IF EXISTS (SELECT * FROM sys.tables WHERE name = '''\n\t\t+ @tableName\n\t\t\t+ '''AND type = ''U'')\n\tBEGIN\n\t\tDROP TABLE IF EXISTS\n\t' + QUOTENAME(@tableName)\n\t+ ' END\nELSE\n\tBEGIN\n\t\tPRINT ''The table does not exist.'';\n\tEND\n'\n\t--SELECT @sql\n    EXEC sp_executesql @sql\n    FETCH NEXT FROM cur INTO @tableName\nEND\n\nCLOSE cur\nDEALLOCATE cur\n\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -389,7 +746,7 @@
 											"type": "ExcelSource",
 											"storeSettings": {
 												"type": "AzureBlobStorageReadSettings",
-												"recursive": false,
+												"recursive": true,
 												"enablePartitionDiscovery": false
 											}
 										},
@@ -415,12 +772,12 @@
 											"referenceName": "dynamicLastYearExcelNameSQLtoEXCEL",
 											"type": "DatasetReference",
 											"parameters": {
-												"filename": {
-													"value": "@item().EXCEL_NAME",
-													"type": "Expression"
-												},
 												"sheet_name": {
 													"value": "@item().SHEET_NAME",
+													"type": "Expression"
+												},
+												"filename": {
+													"value": "@item().filename   ",
 													"type": "Expression"
 												}
 											}
@@ -487,7 +844,7 @@
 					}
 				},
 				"folder": {
-					"name": "AzSQL TO CSV FIFA"
+					"name": "AzSQL_DATABASES"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -725,7 +1082,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "EXCEL PROCESS VENTAS"
+					"name": "BUCLE FOR"
 				},
 				"annotations": [],
 				"type": "Excel",
@@ -2227,6 +2584,135 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DROPBOX_API')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestService1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"endpoint": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "API"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@dataset().endpoint",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestService1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestResource2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "GIT_CSV_LINK",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "API"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/GIT_CSV_LINK')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/XlsContainsActualInName')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FOLER_NAME": {
+						"type": "String"
+					},
+					"FILE_NAME": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "AzStorage_CSV_and_AzSQL/MultipleFiles1FolderToAzSQL"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FILE_NAME",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().FOLER_NAME",
+							"type": "Expression"
+						},
+						"container": "raw"
+					},
+					"sheetIndex": 0,
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "RestauranteCodigo",
+						"type": "String"
+					},
+					{
+						"name": "RestauranteCompañia",
+						"type": "String"
+					},
+					{
+						"name": "Analisis (Fechas)Dia de la semana (Nº)",
+						"type": "String"
+					},
+					{
+						"name": "RestaurantePais",
+						"type": "String"
+					},
+					{
+						"name": "Analisis (Fechas)Fecha",
+						"type": "String"
+					},
+					{
+						"name": "Canal ventaCanal venta (Natural detalle/HD)",
+						"type": "String"
+					},
+					{
+						"name": "Venta__Neta___Real_",
+						"type": "String"
+					},
+					{
+						"name": "SumNº_Tickets",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dynamicLastYearExcelNameSQLtoEXCEL')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2236,10 +2722,10 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"filename": {
+					"sheet_name": {
 						"type": "string"
 					},
-					"sheet_name": {
+					"filename": {
 						"type": "string"
 					}
 				},
@@ -2292,6 +2778,58 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DOPB OAUTH')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('DOPB OAUTH_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "OAuth2ClientCredential",
+					"clientId": "[parameters('DOPB OAUTH_properties_typeProperties_clientId')]",
+					"clientSecret": {
+						"type": "SecureString",
+						"value": "[parameters('DOPB OAUTH_clientSecret')]"
+					},
+					"tokenEndpoint": "https://api.dropboxapi.com/oauth2/token",
+					"scope": "account_info.read account_info.write files.content.read files.content.write files.metadata.read files.metadata.write"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GIT_CSV_LINK')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('GIT_CSV_LINK_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
 				}
 			},
 			"dependsOn": []
