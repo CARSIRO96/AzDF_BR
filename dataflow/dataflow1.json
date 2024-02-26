@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "RestResource2",
+						"referenceName": "DROPBOX_API",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -29,8 +29,16 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     httpMethod: 'POST',",
+				"     body: '\"include_deleted\": false,",
+				"    \"include_has_explicit_shared_members\": false,",
+				"    \"include_media_info\": false,",
+				"    \"include_mounted_folders\": true,",
+				"    \"include_non_downloadable_files\": true,",
+				"    \"path\": \"/DATA\",",
+				"    \"recursive\": false",
+				"',",
 				"     timeout: 30,",
-				"     paginationRules: ['supportRFC5988' -> 'true'],",
+				"     headers: ['Content-Type' -> 'application/json'],",
 				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source1",
 				"source1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
