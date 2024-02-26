@@ -1,0 +1,31 @@
+{
+	"name": "Json1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"json_name": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "API"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().json_name",
+					"type": "Expression"
+				},
+				"folderPath": "_API_DATA",
+				"container": "raw"
+			}
+		},
+		"schema": {}
+	}
+}
