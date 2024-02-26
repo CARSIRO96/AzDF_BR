@@ -1,0 +1,24 @@
+{
+	"name": "HTTP_DATA_CSV_GITHUB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Http_data_GitHub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "API"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
