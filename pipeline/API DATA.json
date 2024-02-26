@@ -43,8 +43,131 @@
 					"url": "https://api.dropboxapi.com/oauth2/token",
 					"body": "grant_type=client_credentials&client_id=kpamkpg3iqd0u8z&client_secret=0ojfgtz2y1qtnr5"
 				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow1",
+						"type": "DataFlowReference",
+						"parameters": {
+							"jsoon_file_name_api_response": "'response_dropbx_api_list_files.json'"
+						},
+						"datasetParameters": {
+							"source1": {
+								"endpoint": "2/files/list_folder"
+							},
+							"sink1": {
+								"json_name": "response_api_dropbx_list_files.json"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Web3",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json",
+						"Authorization": "Bearer sl.BwWyU081-LBF-mjS_ycbRnaT1EX33A7D0a70y7J00osEwUPbz2s-Zuzb2YJnDOhG0a-MlpdGM62KGmAVZLpSBrrxdrco13empB3_dakTK0-0CMW-RoyJ4lOZlSIzZfzmI5rAA8OkkR9R4BZWO7kJ"
+					},
+					"url": "https://api.dropboxapi.com/2/files/list_folder",
+					"body": {
+						"include_deleted": false,
+						"include_has_explicit_shared_members": false,
+						"include_media_info": false,
+						"include_mounted_folders": true,
+						"include_non_downloadable_files": true,
+						"path": "/DATA",
+						"recursive": false
+					}
+				}
+			},
+			{
+				"name": "Get File_name in teh 2nd vaue of the responses",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Web3",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "j_response_api_dropbxV_list_files",
+					"value": {
+						"value": "@activity('Web3').output.entries[1].name",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get count files in the folder",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get File_name in teh 2nd vaue of the responses",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "n_num_elements",
+					"value": {
+						"value": "@length(\n    activity('Web3').output.entries\n    )",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"variables": {
+			"j_response_api_dropbxV_list_files": {
+				"type": "String"
+			},
+			"n_num_elements": {
+				"type": "Integer"
+			}
+		},
 		"annotations": []
 	}
 }
