@@ -1,0 +1,62 @@
+{
+	"name": "AZURE FUNCTIONS",
+	"properties": {
+		"activities": [
+			{
+				"name": "Azure Function1",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "bing_api_getNews_politics",
+					"method": "POST",
+					"body": "{\n  'name':'HOLAA'\n}"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunction1",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Azure Function1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "AF_RESPONSE",
+					"value": {
+						"value": "@activity('Azure Function1').output.Response",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"AF_RESPONSE": {
+				"type": "String"
+			},
+			"Array_Response_AF": {
+				"type": "Array"
+			}
+		},
+		"annotations": []
+	}
+}

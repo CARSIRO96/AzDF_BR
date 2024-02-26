@@ -1,5 +1,5 @@
 {
-	"name": "API DATA",
+	"name": "API - BEARER - DATA",
 	"properties": {
 		"activities": [
 			{
@@ -166,6 +166,12 @@
 			},
 			"n_num_elements": {
 				"type": "Integer"
+			},
+			"AF_RESPONSE": {
+				"type": "String"
+			},
+			"Array_Response_AF": {
+				"type": "Array"
 			}
 		},
 		"annotations": []
