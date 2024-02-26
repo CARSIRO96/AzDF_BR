@@ -1,5 +1,5 @@
 {
-	"name": "Json1",
+	"name": "Json_API_Response_dropb_list_files",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage1",
