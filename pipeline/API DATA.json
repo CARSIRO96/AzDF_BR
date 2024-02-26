@@ -1,0 +1,50 @@
+{
+	"name": "API DATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://www.dropbox.com/oauth2/authorize?client_id=kpamkpg3iqd0u8z&response_type=code"
+				}
+			},
+			{
+				"name": "Web2",
+				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"url": "https://api.dropboxapi.com/oauth2/token",
+					"body": "grant_type=client_credentials&client_id=kpamkpg3iqd0u8z&client_secret=0ojfgtz2y1qtnr5"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

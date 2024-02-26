@@ -1,0 +1,15 @@
+{
+	"name": "RestResource2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "GIT_CSV_LINK",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "API"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
