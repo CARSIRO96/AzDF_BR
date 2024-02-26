@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.dropboxapi.com/",
+			"url": "https://api.dropboxapi.com/2/files/list_folder",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
