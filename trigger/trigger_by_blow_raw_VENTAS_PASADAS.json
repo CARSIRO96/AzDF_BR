@@ -2,7 +2,7 @@
 	"name": "trigger_by_blow_raw_VENTAS_PASADAS",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
