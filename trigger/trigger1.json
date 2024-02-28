@@ -1,0 +1,18 @@
+{
+	"name": "trigger1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/VENTAS_PASADAS",
+			"blobPathEndsWith": ".xlsx",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
