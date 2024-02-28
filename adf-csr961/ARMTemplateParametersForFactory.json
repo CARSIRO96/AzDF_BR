@@ -8,29 +8,41 @@
 		"AzureBlobStorage1_connectionString": {
 			"value": ""
 		},
+		"AzureFunction1_functionKey": {
+			"value": ""
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"DOPB OAUTH_clientSecret": {
+		"RestService1_password": {
 			"value": ""
 		},
-		"DOPB OAUTH_properties_typeProperties_url": {
-			"value": "https://www.dropbox.com"
-		},
-		"DOPB OAUTH_properties_typeProperties_clientId": {
-			"value": "kpamkpg3iqd0u8z"
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
+			"value": "https://afproject1.azurewebsites.net"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
 		},
+		"Http_data_GitHub_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
 		"RestService1_properties_typeProperties_url": {
 			"value": "https://api.dropboxapi.com/"
+		},
+		"RestService1_properties_typeProperties_userName": {
+			"value": "carsiro96.ittools@hotmail.com"
 		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"value": "0202-195510-ujd6538b"
 		},
 		"akvtest_properties_typeProperties_baseUrl": {
 			"value": "https://SQLServerCTPKeys.vault.azure.net/"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"value": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
+		},
+		"trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope": {
+			"value": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
 		}
 	}
 }

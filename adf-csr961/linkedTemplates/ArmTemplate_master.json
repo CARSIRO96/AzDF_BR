@@ -11,29 +11,37 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"AzureFunction1_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AzureFunction1'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"DOPB OAUTH_clientSecret": {
+		"RestService1_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'clientSecret' of 'DOPB OAUTH'"
+			"metadata": "Secure string for 'password' of 'RestService1'"
 		},
-		"DOPB OAUTH_properties_typeProperties_url": {
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
 			"type": "string",
-			"defaultValue": "https://www.dropbox.com"
-		},
-		"DOPB OAUTH_properties_typeProperties_clientId": {
-			"type": "string",
-			"defaultValue": "kpamkpg3iqd0u8z"
+			"defaultValue": "https://afproject1.azurewebsites.net"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
+		"Http_data_GitHub_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.dropboxapi.com/"
+		},
+		"RestService1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "carsiro96.ittools@hotmail.com"
 		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"type": "string",
@@ -42,6 +50,14 @@
 		"akvtest_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://SQLServerCTPKeys.vault.azure.net/"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
+		},
+		"trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
 		},
 		"containerUri": {
 			"type": "string",
@@ -73,33 +89,65 @@
 					"AzureBlobStorage1_connectionString": {
 						"value": "[parameters('AzureBlobStorage1_connectionString')]"
 					},
+					"AzureFunction1_functionKey": {
+						"value": "[parameters('AzureFunction1_functionKey')]"
+					},
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
-					"DOPB OAUTH_clientSecret": {
-						"value": "[parameters('DOPB OAUTH_clientSecret')]"
+					"RestService1_password": {
+						"value": "[parameters('RestService1_password')]"
 					},
-					"DOPB OAUTH_properties_typeProperties_url": {
-						"value": "[parameters('DOPB OAUTH_properties_typeProperties_url')]"
-					},
-					"DOPB OAUTH_properties_typeProperties_clientId": {
-						"value": "[parameters('DOPB OAUTH_properties_typeProperties_clientId')]"
+					"AzureFunction1_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('AzureFunction1_properties_typeProperties_functionAppUrl')]"
 					},
 					"GIT_CSV_LINK_properties_typeProperties_url": {
 						"value": "[parameters('GIT_CSV_LINK_properties_typeProperties_url')]"
 					},
+					"Http_data_GitHub_properties_typeProperties_url": {
+						"value": "[parameters('Http_data_GitHub_properties_typeProperties_url')]"
+					},
 					"RestService1_properties_typeProperties_url": {
 						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					},
+					"RestService1_properties_typeProperties_userName": {
+						"value": "[parameters('RestService1_properties_typeProperties_userName')]"
 					},
 					"akvtest_properties_typeProperties_baseUrl": {
 						"value": "[parameters('akvtest_properties_typeProperties_baseUrl')]"
 					},
-					"adftest_properties_typeProperties_existingClusterId": {
-						"value": "[parameters('adftest_properties_typeProperties_existingClusterId')]"
+					"trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope": {
+						"value": "[parameters('trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "adf-csr961_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"adftest_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('adftest_properties_typeProperties_existingClusterId')]"
+					},
+					"trigger1_properties_typeProperties_scope": {
+						"value": "[parameters('trigger1_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-csr961_ArmTemplate_0')]"
+			]
 		}
 	]
 }

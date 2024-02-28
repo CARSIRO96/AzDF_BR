@@ -11,29 +11,37 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"AzureFunction1_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AzureFunction1'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"DOPB OAUTH_clientSecret": {
+		"RestService1_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'clientSecret' of 'DOPB OAUTH'"
+			"metadata": "Secure string for 'password' of 'RestService1'"
 		},
-		"DOPB OAUTH_properties_typeProperties_url": {
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
 			"type": "string",
-			"defaultValue": "https://www.dropbox.com"
-		},
-		"DOPB OAUTH_properties_typeProperties_clientId": {
-			"type": "string",
-			"defaultValue": "kpamkpg3iqd0u8z"
+			"defaultValue": "https://afproject1.azurewebsites.net"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
+		},
+		"Http_data_GitHub_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.dropboxapi.com/"
+		},
+		"RestService1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "carsiro96.ittools@hotmail.com"
 		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"type": "string",
@@ -42,6 +50,14 @@
 		"akvtest_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://SQLServerCTPKeys.vault.azure.net/"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
+		},
+		"trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/19944c1e-2e5d-4745-8be0-d24900c7dc73/resourceGroups/Project1/providers/Microsoft.Storage/storageAccounts/adlscsr961"
 		}
 	},
 	"variables": {
@@ -49,7 +65,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/API DATA')]",
+			"name": "[concat(parameters('factoryName'), '/API - BEARER - DATA')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -96,14 +112,200 @@
 							"url": "https://api.dropboxapi.com/oauth2/token",
 							"body": "grant_type=client_credentials&client_id=kpamkpg3iqd0u8z&client_secret=0ojfgtz2y1qtnr5"
 						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Web3",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json",
+								"Authorization": "Bearer sl.BwWyU081-LBF-mjS_ycbRnaT1EX33A7D0a70y7J00osEwUPbz2s-Zuzb2YJnDOhG0a-MlpdGM62KGmAVZLpSBrrxdrco13empB3_dakTK0-0CMW-RoyJ4lOZlSIzZfzmI5rAA8OkkR9R4BZWO7kJ"
+							},
+							"url": "https://api.dropboxapi.com/2/files/list_folder",
+							"body": {
+								"include_deleted": false,
+								"include_has_explicit_shared_members": false,
+								"include_media_info": false,
+								"include_mounted_folders": true,
+								"include_non_downloadable_files": true,
+								"path": "/DATA",
+								"recursive": false
+							}
+						}
+					},
+					{
+						"name": "Get File_name in teh 2nd vaue of the responses",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Web3",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "j_response_api_dropbxV_list_files",
+							"value": {
+								"value": "@activity('Web3').output.entries[1].name",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Get count files in the folder",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Get File_name in teh 2nd vaue of the responses",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "n_num_elements",
+							"value": {
+								"value": "@length(\n    activity('Web3').output.entries\n    )",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"variables": {
+					"j_response_api_dropbxV_list_files": {
+						"type": "String"
+					},
+					"n_num_elements": {
+						"type": "Integer"
+					},
+					"AF_RESPONSE": {
+						"type": "String"
+					},
+					"Array_Response_AF": {
+						"type": "Array"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AZURE FUNCTIONS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Azure Function1",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "bing_api_getNews_politics",
+							"method": "POST",
+							"headers": {},
+							"body": "{\n  'name':'HOLAA'\n}"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureFunction1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Azure Function1",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "AF_RESPONSE",
+							"value": {
+								"value": "@activity('Azure Function1').output.Response",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"AF_RESPONSE": {
+						"type": "String"
+					},
+					"Array_Response_AF": {
+						"type": "Array"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureFunction1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzStorage_CSV_and_AzSQL')]",
@@ -2615,6 +2817,128 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/HTTP_DATA_CSV_GITHUB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Http_data_GitHub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "API"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Http_data_GitHub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ingest_Csv_From_APIs')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"csv_name": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "API"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().csv_name",
+							"type": "Expression"
+						},
+						"folderPath": "_API_DATA",
+						"container": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "EMPLEADO",
+						"type": "String"
+					},
+					{
+						"name": "\tSUELDO",
+						"type": "String"
+					},
+					{
+						"name": "\t\tDEPARTAMENTO",
+						"type": "String"
+					},
+					{
+						"name": "\tPROJECT_MANAGER",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json_API_Response_dropb_list_files')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"json_name": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "API"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().json_name",
+							"type": "Expression"
+						},
+						"folderPath": "_API_DATA",
+						"container": "raw"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RestResource2')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2770,6 +3094,24 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureFunction1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "[parameters('AzureFunction1_properties_typeProperties_functionAppUrl')]",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunction1_functionKey')]"
+					},
+					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2778,28 +3120,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DOPB OAUTH')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('DOPB OAUTH_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "OAuth2ClientCredential",
-					"clientId": "[parameters('DOPB OAUTH_properties_typeProperties_clientId')]",
-					"clientSecret": {
-						"type": "SecureString",
-						"value": "[parameters('DOPB OAUTH_clientSecret')]"
-					},
-					"tokenEndpoint": "https://api.dropboxapi.com/oauth2/token",
-					"scope": "account_info.read account_info.write files.content.read files.content.write files.metadata.read files.metadata.write"
 				}
 			},
 			"dependsOn": []
@@ -2820,6 +3140,21 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Http_data_GitHub')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('Http_data_GitHub_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RestService1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2829,7 +3164,12 @@
 				"typeProperties": {
 					"url": "[parameters('RestService1_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous"
+					"authenticationType": "Basic",
+					"userName": "[parameters('RestService1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('RestService1_password')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -2868,6 +3208,58 @@
 				"type": "AzureKeyVault",
 				"typeProperties": {
 					"baseUrl": "[parameters('akvtest_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "API - BEARER - DATA",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/raw/blobs/VENTAS_PASADAS",
+					"blobPathEndsWith": "xlsx",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/API - BEARER - DATA')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_by_blow_raw_VENTAS_PASADAS')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/raw/blobs/VENTAS_PASADAS",
+					"blobPathEndsWith": ".xlsx",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger_by_blow_raw_VENTAS_PASADAS_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
 			"dependsOn": []
