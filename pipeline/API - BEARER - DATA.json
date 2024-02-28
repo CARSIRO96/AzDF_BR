@@ -59,21 +59,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "dataflow1",
-						"type": "DataFlowReference",
-						"parameters": {
-							"jsoon_file_name_api_response": "'response_dropbx_api_list_files.json'"
-						},
-						"datasetParameters": {
-							"source1": {
-								"endpoint": "2/files/list_folder"
-							},
-							"sink1": {
-								"json_name": "response_api_dropbx_list_files.json"
-							}
-						}
-					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
