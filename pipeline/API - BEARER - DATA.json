@@ -157,6 +157,9 @@
 			},
 			"Array_Response_AF": {
 				"type": "Array"
+			},
+			"OUTPUT": {
+				"type": "String"
 			}
 		},
 		"annotations": []
