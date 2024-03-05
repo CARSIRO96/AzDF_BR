@@ -1,0 +1,109 @@
+{
+	"name": "API AUTH",
+	"properties": {
+		"activities": [
+			{
+				"name": "WebSystemManagedIdentity",
+				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"headers": {
+						"x-ms-version": "2017-11-09",
+						"xs-ms-blob-type": "BlockBlob"
+					},
+					"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://storage.azure.com"
+					}
+				}
+			},
+			{
+				"name": "WebServicePrincipal",
+				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "WebSystemManagedIdentity",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"headers": {
+						"x-ms-version": "2017-11-09",
+						"xs-ms-blob-type": "BlockBlob"
+					},
+					"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+					"authentication": {
+						"type": "ServicePrincipal",
+						"userTenant": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6",
+						"username": "de7f60dd-68cb-415c-b186-4270e90cce23",
+						"resource": "https://storage.azure.com",
+						"password": {
+							"type": "AzureKeyVaultSecret",
+							"store": {
+								"referenceName": "akvtest",
+								"type": "LinkedServiceReference"
+							},
+							"secretName": "appadfskey",
+							"secretVersion": "e201f092a8b2416cbb828625178ff690"
+						}
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "WebServicePrincipal",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "OUTPUT",
+					"value": {
+						"value": "@string(activity('WebServicePrincipal').output)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"OUTPUT": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
