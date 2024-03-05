@@ -1,0 +1,11 @@
+{
+	"name": "adls_auth_by_managed_identity",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"serviceEndpoint": "https://adlscsr961.blob.core.windows.net/",
+			"accountKind": "StorageV2"
+		}
+	}
+}
