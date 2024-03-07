@@ -1,0 +1,60 @@
+{
+	"name": "SqlServerTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer_CAN",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "LOCAL"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "xserver_name",
+				"type": "varchar"
+			},
+			{
+				"name": "xdttm_ins",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "xdttm_last_ins_upd",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "xfallback_dbid",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "dbid",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "status",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "version",
+				"type": "smallint",
+				"precision": 5
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "E_ACTUAL_2022_Q1_XLSX"
+		}
+	}
+}
