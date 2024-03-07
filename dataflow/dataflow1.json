@@ -1,0 +1,58 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzSql_RAW_DATA",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzStorage_Csv_Dynamic",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ID as integer,",
+				"          Nombre as string,",
+				"          NombreCompleto as string,",
+				"          Club as string,",
+				"          Liga as string,",
+				"          FechaNacimiento as date,",
+				"          AlturaCM as integer,",
+				"          PesoKG as integer,",
+				"          Nacionalidad as string,",
+				"          ValorEuropa as double,",
+				"          PiePreferido as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT * FROM [dbo].E_EMPLEADOS_CSV]',",
+				"     format: 'query') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EMPLEADO as string,",
+				"          {     SUELDO} as string,",
+				"          {          DEPARTAMENTO} as string,",
+				"          {     PROJECT_MANAGER} as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1) ~> sink1"
+			]
+		}
+	}
+}
