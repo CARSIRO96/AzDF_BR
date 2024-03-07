@@ -2,11 +2,17 @@
 	"name": "SqlServer_CAN",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
+		"parameters": {
+			"DATABASE": {
+				"type": "String",
+				"defaultValue": "SA_RESTO"
+			}
+		},
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=CANARIO➖96\\MSSQLSERVER01;initial catalog=master;user id=csr96",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MzEwYzRiZC0zZjc0LTQwMDEtOTAxNC04MDRlNTcxNzYxZTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "integrated security=False;data source=CANARIO➖96\\MSSQLSERVER01;initial catalog=@{linkedService().DATABASE};user id=csr96",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhZmMzYzYxZS1lMWUwLTQ5ODMtODBhOC00ODExOTA0YjZhYTEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntime1",
