@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=CANARIO➖96\\MSSQLSERVER01;initial catalog=SA_RESTO;user id=csr96",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJmZWQ0N2ZjMi02YmQ1LTQxZGMtYmViNi1jMDAzNTIzMjAzNWQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "integrated security=False;data source=CANARIO➖96\\MSSQLSERVER01;initial catalog=master;user id=csr96",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MzEwYzRiZC0zZjc0LTQwMDEtOTAxNC04MDRlNTcxNzYxZTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntime1",
