@@ -1,1 +1,6 @@
-{}
+{
+	"DATABASE_NAME": {
+		"type": "string",
+		"value": "SA_RESTO"
+	}
+}

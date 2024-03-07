@@ -19,13 +19,33 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
+		"FileServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'FileServer1'"
+		},
 		"RestService1_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'RestService1'"
 		},
+		"SqlServer_CAN_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer_CAN'"
+		},
+		"adls_auth_service_principal_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'adls_auth_service_principal'"
+		},
 		"AzureFunction1_properties_typeProperties_functionAppUrl": {
 			"type": "string",
 			"defaultValue": "https://afproject1.azurewebsites.net"
+		},
+		"FileServer1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\CANARIO96"
+		},
+		"FileServer1_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "canario96\\34609"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
 			"type": "string",
@@ -46,6 +66,22 @@
 		"adftest_properties_typeProperties_existingClusterId": {
 			"type": "string",
 			"defaultValue": "0202-195510-ujd6538b"
+		},
+		"adls_auth_by_managed_identity_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6"
+		},
+		"adls_auth_service_principal_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "de7f60dd-68cb-415c-b186-4270e90cce23"
 		},
 		"akvtest_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -230,11 +266,131 @@
 					},
 					"Array_Response_AF": {
 						"type": "Array"
+					},
+					"OUTPUT": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/API AUTH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "WebSystemManagedIdentity",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {
+								"x-ms-version": "2017-11-09",
+								"xs-ms-blob-type": "BlockBlob"
+							},
+							"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://storage.azure.com"
+							}
+						}
+					},
+					{
+						"name": "WebServicePrincipal",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "WebSystemManagedIdentity",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {
+								"x-ms-version": "2017-11-09",
+								"xs-ms-blob-type": "BlockBlob"
+							},
+							"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+							"authentication": {
+								"type": "ServicePrincipal",
+								"userTenant": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6",
+								"username": "de7f60dd-68cb-415c-b186-4270e90cce23",
+								"resource": "https://storage.azure.com",
+								"password": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "akvtest",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "appadfskey",
+									"secretVersion": "e201f092a8b2416cbb828625178ff690"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "WebServicePrincipal",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "OUTPUT",
+							"value": {
+								"value": "@string(activity('WebServicePrincipal').output)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"OUTPUT": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/akvtest')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AZURE FUNCTIONS')]",
@@ -2960,6 +3116,71 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SqlServerTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SqlServer_CAN",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "LOCAL"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "xserver_name",
+						"type": "varchar"
+					},
+					{
+						"name": "xdttm_ins",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "xdttm_last_ins_upd",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "xfallback_dbid",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "dbid",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "status",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "version",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "E_ACTUAL_2022_Q1_XLSX"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SqlServer_CAN')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/XlsContainsActualInName')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3125,6 +3346,24 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/FileServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('FileServer1_properties_typeProperties_host')]",
+					"userId": "[parameters('FileServer1_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('FileServer1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/GIT_CSV_LINK')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3175,6 +3414,25 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer_CAN')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('SqlServer_CAN_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntime1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/adftest')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3200,6 +3458,41 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/adls_auth_by_managed_identity')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"serviceEndpoint": "[parameters('adls_auth_by_managed_identity_properties_typeProperties_serviceEndpoint')]",
+					"accountKind": "StorageV2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls_auth_service_principal')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"serviceEndpoint": "[parameters('adls_auth_service_principal_properties_typeProperties_serviceEndpoint')]",
+					"tenant": "[parameters('adls_auth_service_principal_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('adls_auth_service_principal_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "SecureString",
+						"value": "[parameters('adls_auth_service_principal_servicePrincipalCredential')]"
+					},
+					"accountKind": "StorageV2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/akvtest')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3218,7 +3511,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -3263,6 +3556,80 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzSql_RAW_DATA",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzStorage_Csv_Dynamic",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          ID as integer,",
+						"          Nombre as string,",
+						"          NombreCompleto as string,",
+						"          Club as string,",
+						"          Liga as string,",
+						"          FechaNacimiento as date,",
+						"          AlturaCM as integer,",
+						"          PesoKG as integer,",
+						"          Nacionalidad as string,",
+						"          ValorEuropa as double,",
+						"          PiePreferido as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT * FROM [dbo].E_EMPLEADOS_CSV]',",
+						"     format: 'query') ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          EMPLEADO as string,",
+						"          {     SUELDO} as string,",
+						"          {          DEPARTAMENTO} as string,",
+						"          {     PROJECT_MANAGER} as string",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzSql_RAW_DATA')]",
+				"[concat(variables('factoryId'), '/datasets/AzStorage_Csv_Dynamic')]"
+			]
 		}
 	]
 }

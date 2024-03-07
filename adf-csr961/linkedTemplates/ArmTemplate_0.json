@@ -19,13 +19,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
+		"FileServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'FileServer1'"
+		},
 		"RestService1_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'RestService1'"
 		},
+		"adls_auth_service_principal_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'adls_auth_service_principal'"
+		},
 		"AzureFunction1_properties_typeProperties_functionAppUrl": {
 			"type": "string",
 			"defaultValue": "https://afproject1.azurewebsites.net"
+		},
+		"FileServer1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\CANARIO96"
+		},
+		"FileServer1_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "canario96\\34609"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
 			"type": "string",
@@ -42,6 +58,22 @@
 		"RestService1_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "carsiro96.ittools@hotmail.com"
+		},
+		"adls_auth_by_managed_identity_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6"
+		},
+		"adls_auth_service_principal_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "de7f60dd-68cb-415c-b186-4270e90cce23"
 		},
 		"akvtest_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -222,6 +254,9 @@
 					},
 					"Array_Response_AF": {
 						"type": "Array"
+					},
+					"OUTPUT": {
+						"type": "String"
 					}
 				},
 				"annotations": []
@@ -268,6 +303,24 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('FileServer1_properties_typeProperties_host')]",
+					"userId": "[parameters('FileServer1_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('FileServer1_password')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -323,6 +376,41 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/adls_auth_by_managed_identity')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"serviceEndpoint": "[parameters('adls_auth_by_managed_identity_properties_typeProperties_serviceEndpoint')]",
+					"accountKind": "StorageV2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls_auth_service_principal')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"serviceEndpoint": "[parameters('adls_auth_service_principal_properties_typeProperties_serviceEndpoint')]",
+					"tenant": "[parameters('adls_auth_service_principal_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('adls_auth_service_principal_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "SecureString",
+						"value": "[parameters('adls_auth_service_principal_servicePrincipalCredential')]"
+					},
+					"accountKind": "StorageV2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/akvtest')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -355,6 +443,133 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/API AUTH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "WebSystemManagedIdentity",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {
+								"x-ms-version": "2017-11-09",
+								"xs-ms-blob-type": "BlockBlob"
+							},
+							"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://storage.azure.com"
+							}
+						}
+					},
+					{
+						"name": "WebServicePrincipal",
+						"type": "WebActivity",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [
+							{
+								"activity": "WebSystemManagedIdentity",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {
+								"x-ms-version": "2017-11-09",
+								"xs-ms-blob-type": "BlockBlob"
+							},
+							"url": "https://adlscsr961.blob.core.windows.net/raw/_API_DATA/employer.csv",
+							"authentication": {
+								"type": "ServicePrincipal",
+								"userTenant": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6",
+								"username": "de7f60dd-68cb-415c-b186-4270e90cce23",
+								"resource": "https://storage.azure.com",
+								"password": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "akvtest",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "appadfskey",
+									"secretVersion": "e201f092a8b2416cbb828625178ff690"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "WebServicePrincipal",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "OUTPUT",
+							"value": {
+								"value": "@string(activity('WebServicePrincipal').output)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"OUTPUT": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/akvtest')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AZURE FUNCTIONS')]",
@@ -2179,180 +2394,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DROPBOX_API')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "RestService1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"endpoint": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "API"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@dataset().endpoint",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/RestService1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/HTTP_DATA_CSV_GITHUB')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Http_data_GitHub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "API"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Http_data_GitHub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Ingest_Csv_From_APIs')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"csv_name": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "API"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().csv_name",
-							"type": "Expression"
-						},
-						"folderPath": "_API_DATA",
-						"container": "raw"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "EMPLEADO",
-						"type": "String"
-					},
-					{
-						"name": "\tSUELDO",
-						"type": "String"
-					},
-					{
-						"name": "\t\tDEPARTAMENTO",
-						"type": "String"
-					},
-					{
-						"name": "\tPROJECT_MANAGER",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Json_API_Response_dropb_list_files')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"json_name": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "API"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().json_name",
-							"type": "Expression"
-						},
-						"folderPath": "_API_DATA",
-						"container": "raw"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RestResource2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "GIT_CSV_LINK",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "API"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GIT_CSV_LINK')]"
 			]
 		}
 	]

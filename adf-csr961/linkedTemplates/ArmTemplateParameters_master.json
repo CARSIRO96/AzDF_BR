@@ -14,11 +14,26 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
+		"FileServer1_password": {
+			"value": ""
+		},
 		"RestService1_password": {
+			"value": ""
+		},
+		"SqlServer_CAN_connectionString": {
+			"value": ""
+		},
+		"adls_auth_service_principal_servicePrincipalCredential": {
 			"value": ""
 		},
 		"AzureFunction1_properties_typeProperties_functionAppUrl": {
 			"value": "https://afproject1.azurewebsites.net"
+		},
+		"FileServer1_properties_typeProperties_host": {
+			"value": "\\\\CANARIO96"
+		},
+		"FileServer1_properties_typeProperties_userId": {
+			"value": "canario96\\34609"
 		},
 		"GIT_CSV_LINK_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/CARSIRO96/DATA_TRAIN/master/CSVs/empleados.csv"
@@ -34,6 +49,18 @@
 		},
 		"adftest_properties_typeProperties_existingClusterId": {
 			"value": "0202-195510-ujd6538b"
+		},
+		"adls_auth_by_managed_identity_properties_typeProperties_serviceEndpoint": {
+			"value": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_serviceEndpoint": {
+			"value": "https://adlscsr961.blob.core.windows.net/"
+		},
+		"adls_auth_service_principal_properties_typeProperties_tenant": {
+			"value": "af68d0a0-cc2f-4750-b6c7-17aa0d0315f6"
+		},
+		"adls_auth_service_principal_properties_typeProperties_servicePrincipalId": {
+			"value": "de7f60dd-68cb-415c-b186-4270e90cce23"
 		},
 		"akvtest_properties_typeProperties_baseUrl": {
 			"value": "https://SQLServerCTPKeys.vault.azure.net/"
