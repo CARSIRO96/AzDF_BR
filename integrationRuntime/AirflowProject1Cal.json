@@ -1,0 +1,26 @@
+{
+	"name": "AirflowProject1Cal",
+	"properties": {
+		"type": "Airflow",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"computeSize": "Large",
+				"extraNodes": 0,
+				"enableAutoscale": false
+			},
+			"airflowProperties": {
+				"airflowVersion": "2.6.3",
+				"airflowEnvironmentVariables": null,
+				"airflowRequirements": [],
+				"enableAADIntegration": false,
+				"enableTriggerers": false,
+				"userName": "csr96",
+				"password": null,
+				"airflowEntityReferences": [],
+				"encryptedSecrets": [],
+				"secrets": null
+			}
+		}
+	}
+}
