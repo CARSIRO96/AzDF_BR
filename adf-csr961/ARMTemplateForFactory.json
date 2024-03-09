@@ -101,6 +101,84 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/AIRFLOW_ETL_1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "NOMBRE",
+							"value": "CARLOS"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"NOMBRE": {
+						"type": "String"
+					},
+					"APELLIDO": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "AIRFLOW ETLs/TEST"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AIRFLOW_ETL_2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "APELLIDO",
+							"value": "SICILIA"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"NOMBRE": {
+						"type": "String"
+					},
+					"APELLIDO": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "AIRFLOW ETLs/TEST"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/API - BEARER - DATA')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3553,6 +3631,35 @@
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AirflowProject1Cal')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Airflow",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US",
+						"computeSize": "Large",
+						"extraNodes": 0,
+						"enableAutoscale": false
+					},
+					"airflowProperties": {
+						"airflowVersion": "2.6.3",
+						"airflowEnvironmentVariables": null,
+						"airflowRequirements": [],
+						"enableAADIntegration": false,
+						"enableTriggerers": false,
+						"userName": "csr96",
+						"password": null,
+						"airflowEntityReferences": [],
+						"encryptedSecrets": [],
+						"secrets": null
+					}
 				}
 			},
 			"dependsOn": []
