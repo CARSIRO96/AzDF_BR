@@ -1,0 +1,33 @@
+{
+	"name": "AIRFLOW_ETL_1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "NOMBRE",
+					"value": "CARLOS"
+				}
+			}
+		],
+		"variables": {
+			"NOMBRE": {
+				"type": "String"
+			},
+			"APELLIDO": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AIRFLOW ETLs/TEST"
+		},
+		"annotations": []
+	}
+}
